@@ -115,7 +115,13 @@ function Video() {
       {image === '' ? (
         <>
           <div className='appvide'>
-            <video crossOrigin='anonymous' ref={videoRef} autoPlay></video>
+            <video
+              crossOrigin='anonymous'
+              style={{ width: 400, height: 400 }}
+              ref={videoRef}
+              autoPlay
+              playsInline
+            ></video>
           </div>
           <canvas ref={canvasRef} width='440' height='650' className='appcanvas' />
           <button onClick={startVideo}>Start Camera</button>
