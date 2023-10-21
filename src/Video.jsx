@@ -80,13 +80,36 @@ function Video() {
 
             const firstLargestExpression = keys[0];
             const secondLargestExpression = keys[1];
-            setResult({ one: firstLargestExpression, two: secondLargestExpression });
+
+            setResult({
+              one: '1순위 : ' + emotion(firstLargestExpression),
+              two: '2순위 : ' + emotion(secondLargestExpression),
+            });
             console.log(` ${firstLargestExpression}`);
             console.log(` ${secondLargestExpression}`);
           });
         }
       }
     }, 200);
+  };
+
+  const emotion = (result) => {
+    switch (result) {
+      case 'surprised':
+        return '행복함';
+      case 'happy':
+        return '행복함';
+      case 'disgusted':
+        return '화남';
+      case 'angry':
+        return '화남';
+      case 'fearful':
+        return '슬픔';
+      case 'sad':
+        return '슬픔';
+      default:
+        return '무표정';
+    }
   };
 
   // 이미지 캡쳐
