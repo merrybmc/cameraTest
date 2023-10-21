@@ -8,30 +8,33 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 function Video() {
   const videoRef = useRef();
   const canvasRef = useRef();
-  const [Emotion, setEmotion] = useState('');
   const [color, setColor] = useState('black');
   const [image, setImage] = useRecoilState(atomImage);
   const setResult = useSetRecoilState(atomResult);
   const navigate = useNavigate();
+  const [buttonColor, setButtonColor] = useState('#ddd');
+  const [btnState, setBtnState] = useState(true);
 
-  // LOAD FROM USEEFFECT
+  // 마운트 될 때 카메라 실행
   useEffect(() => {
+    startVideo();
     videoRef && loadModels();
   }, []);
 
-  // OPEN YOU FACE WEBCAM
+  // 카메라 켜기
   const startVideo = () => {
     navigator.mediaDevices
       .getUserMedia({ video: true })
       .then((currentStream) => {
         videoRef.current.srcObject = currentStream;
+        console.log(videoRef.current.srcObject);
       })
       .catch((err) => {
         console.log(err);
       });
   };
-  // LOAD MODELS FROM FACE API
 
+  // api 호출
   const loadModels = () => {
     Promise.all([
       // THIS FOR FACE DETECT AND LOAD FROM YOU PUBLIC/MODELS DIRECTORY
@@ -44,6 +47,7 @@ function Video() {
     });
   };
 
+  // 감정상태 파악
   const faceMyDetect = () => {
     setInterval(async () => {
       if (videoRef.current && videoRef.current.videoWidth !== 0) {
@@ -52,12 +56,12 @@ function Video() {
           .withFaceLandmarks()
           .withFaceExpressions();
 
-        // DRAW YOUR FACE IN WEBCAM
-        canvasRef.current.innerHTML = faceapi.createCanvasFromMedia(videoRef.current);
-        faceapi.matchDimensions(canvasRef.current, {
-          width: videoRef.current.videoWidth,
-          height: videoRef.current.videoHeight,
-        });
+        // 감정 상태 표현
+        // canvasRef.current.innerHTML = faceapi.createCanvasFromMedia(videoRef.current);
+        // faceapi.matchDimensions(canvasRef.current, {
+        //   width: videoRef.current.videoWidth,
+        //   height: videoRef.current.videoHeight,
+        // });
 
         // faceapi.draw.drawDetections(canvasRef.current, resized);
         // faceapi.draw.drawFaceLandmarks(canvasRef.current, resized);
@@ -65,6 +69,8 @@ function Video() {
 
         if (detections && detections.length > 0) {
           setColor('cyan');
+          setButtonColor('yellow');
+          setBtnState(false);
           detections.forEach((detection, i) => {
             const expressions = detection.expressions;
             console.log(expressions);
@@ -77,15 +83,13 @@ function Video() {
             setResult({ one: firstLargestExpression, two: secondLargestExpression });
             console.log(` ${firstLargestExpression}`);
             console.log(` ${secondLargestExpression}`);
-
-            // setEmotion(firstLargestExpression);
-            // setEmotion(secondLargestExpression);
           });
         }
       }
-    }, 1000);
+    }, 200);
   };
 
+  // 이미지 캡쳐
   const captureImage = async () => {
     if (videoRef.current && canvasRef.current) {
       const video = videoRef.current;
@@ -94,16 +98,18 @@ function Video() {
       const context = canvas.getContext('2d');
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      // Save the image here or perform any other operations with the image
+      // 이미지 URL 뽑아내기
       const imageURL = canvas.toDataURL('image/png');
       // You can upload the imageURL or perform any other operations
 
       setImage(imageURL);
+
+      // 이미지 저장
       // For saving the image, you can use the following code
-      const link = document.createElement('a');
-      link.href = imageURL;
-      link.download = 'image.png';
-      link.click();
+      // const link = document.createElement('a');
+      // link.href = imageURL;
+      // link.download = 'image.png';
+      // link.click();
 
       navigate('/result');
     }
@@ -112,24 +118,30 @@ function Video() {
   return (
     <div className='myapp'>
       <h1 style={{ backgroundColor: color }}>FAce Detection</h1>
-      {image === '' ? (
-        <>
-          <div className='appvide'>
-            <video
-              crossOrigin='anonymous'
-              style={{ width: 400, height: 400 }}
-              ref={videoRef}
-              autoPlay
-              playsInline
-            ></video>
-          </div>
-          <canvas ref={canvasRef} width='440' height='650' className='appcanvas' />
-          <button onClick={startVideo}>Start Camera</button>
-          <button onClick={captureImage}>Capture</button>
-        </>
-      ) : (
-        ''
-      )}
+      <div className='appvide'>
+        <video
+          crossOrigin='anonymous'
+          style={{ width: 400, height: 400 }}
+          ref={videoRef}
+          autoPlay
+          playsInline
+        ></video>
+      </div>
+      <canvas
+        ref={canvasRef}
+        style={{ display: 'none', backgroundColor: 'black' }}
+        width='440'
+        height='650'
+        className='appcanvas'
+      />
+      {/* <button onClick={startVideo}>Start Camera</button> */}
+      <button
+        onClick={captureImage}
+        style={{ backgroundColor: buttonColor, color: 'black' }}
+        disabled={btnState}
+      >
+        Capture
+      </button>
     </div>
   );
 }
