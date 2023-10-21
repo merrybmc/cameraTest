@@ -10,7 +10,9 @@ export default function Result() {
 
   return (
     <div>
-      <button onClick={() => navigate('/')}>다시 찍기</button>
+      <button onClick={() => navigate('/')} style={{ backgroundColor: 'yellow' }}>
+        다시 찍기
+      </button>
       <p>감정 결과1 = {result.one}</p>
       <p>감정 결과2 = {result.two}</p>
       <img src={image} />
