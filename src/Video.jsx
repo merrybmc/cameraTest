@@ -8,7 +8,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 function Video() {
   const videoRef = useRef();
   const canvasRef = useRef();
-  const [color, setColor] = useState('black');
+  const [color, setColor] = useState('#ddd');
   const [image, setImage] = useRecoilState(atomImage);
   const setResult = useSetRecoilState(atomResult);
   const navigate = useNavigate();
