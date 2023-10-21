@@ -117,7 +117,7 @@ function Video() {
 
   return (
     <div className='myapp'>
-      <h1 style={{ backgroundColor: color }}>FAce Detection</h1>
+      <h1 style={{ backgroundColor: color }}>삼김조 프로토타입</h1>
       <div className='appvide'>
         <video
           crossOrigin='anonymous'
